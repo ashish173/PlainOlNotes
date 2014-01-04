@@ -61,7 +61,7 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
     	notesList = datasource.findAll();  // fetch all data
 		// create an adapter that will tell android what & how to display
     	ArrayAdapter<NoteItem> adapter = 
-				new ArrayAdapter<NoteItem>(this, android.R.layout.simple_list_item_1, notesList); 
+				new ArrayAdapter<NoteItem>(this, R.layout.list_item_layout, notesList); 
 		// attach this adapter to current ListActivity
     	setListAdapter(adapter);
 		
