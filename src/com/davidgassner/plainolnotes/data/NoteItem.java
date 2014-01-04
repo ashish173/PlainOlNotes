@@ -43,4 +43,10 @@ public class NoteItem {
 		return note;
 	}
 	
+	@Override
+	public String toString() {
+		return this.getText();       // this returns the text field of the NoteItem object
+		// return super.toString();  // default behaviour
+	}
+	
 }

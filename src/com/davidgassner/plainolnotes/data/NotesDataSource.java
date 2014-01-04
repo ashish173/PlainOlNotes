@@ -44,9 +44,7 @@ public class NotesDataSource {
 			note.setText((String) notesMap.get(key)); // get does not know of the return type so casting to string
 			noteList.add(note);
 		}
-		// List<NoteItem> noteList = new ArrayList<NoteItem>();
-		// NoteItem note = NoteItem.getNew();
-		// noteList.add(note);
+		
 		return noteList;
 	}
 	
