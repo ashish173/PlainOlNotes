@@ -1,9 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!-- withText is for larger devices where there is more space and text can also be shown -->
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_create"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:showAsAction="always|withText"    
+        android:title="@string/action_create"
+        android:icon="@drawable/ic_action_create_note"/>
 
 </menu>

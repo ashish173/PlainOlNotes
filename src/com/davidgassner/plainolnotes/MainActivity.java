@@ -3,9 +3,10 @@ package com.davidgassner.plainolnotes;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.davidgassner.plainolnotes.data.NoteItem;
@@ -74,5 +75,29 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+	
+	
+	// this method is triggered when user clicks or touches anything on the phone screen
+	// in this case when user selects on the + icon in the top action bar
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// item is the menu item which was selected or touched
+		// we can make sure which menuitem was selected by comparing the item ids
+		if (item.getItemId() == R.id.action_create) {
+			createNote();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	// create a new note and pass it to the NoteEditorActivity
+	private void createNote() {
+		NoteItem note = NoteItem.getNew();  // get a new noteItem
+		Intent intent = new Intent(this, NoteEditorActivity.class);  // class name is passed android instantiates the activity itself
+		intent.putExtra("key", note.getKey());  // these are sent to the next activity
+		intent.putExtra("text", note.getText());
+		startActivityForResult(intent, 1001);   // requestcode is a const which is used to recgnize how the communication happens
+		
+		
+	}
     
 }
