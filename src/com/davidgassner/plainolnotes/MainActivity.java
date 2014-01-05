@@ -5,9 +5,12 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.davidgassner.plainolnotes.data.NoteItem;
 import com.davidgassner.plainolnotes.data.NotesDataSource;
@@ -15,6 +18,7 @@ import com.davidgassner.plainolnotes.data.NotesDataSource;
 
 public class MainActivity extends ListActivity {  // ListActivity inherits from Activity class
 
+	private static final int EDITOR_ACTIVITY_REQUEST = 1001;
 	private NotesDataSource datasource;   // instantiating the NoteDataSource class
 	List<NoteItem> notesList;
     @Override
@@ -59,7 +63,7 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
     // on call we retrieve all data from persistent data store
     private void refreshDisplay() {
 		
-    	notesList = datasource.findAll();  // fetch all data
+    	notesList = datasource.findAll();  										// fetch all data
 		// create an adapter that will tell android what & how to display
     	ArrayAdapter<NoteItem> adapter = 
 				new ArrayAdapter<NoteItem>(this, R.layout.list_item_layout, notesList); 
@@ -91,13 +95,43 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
 
 	// create a new note and pass it to the NoteEditorActivity
 	private void createNote() {
-		NoteItem note = NoteItem.getNew();  // get a new noteItem
-		Intent intent = new Intent(this, NoteEditorActivity.class);  // class name is passed android instantiates the activity itself
-		intent.putExtra("key", note.getKey());  // these are sent to the next activity
+		// When user clicks on the plus icon a new note should be made 
+		NoteItem note = NoteItem.getNew();  							// get a new noteItem
+		Intent intent = new Intent(this, NoteEditorActivity.class); 	// class name is passed android instantiates the activity itself
+		intent.putExtra("key", note.getKey());  						// these are sent to the next activity
 		intent.putExtra("text", note.getText());
-		startActivityForResult(intent, 1001);   // requestcode is a const which is used to recgnize how the communication happens
+		startActivityForResult(intent, EDITOR_ACTIVITY_REQUEST);   						// requestcode is a const which is used to recgnize how the communication happens
 		
 		
 	}
-    
+    // When an item in the list is clicked this method gets called
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// When user clicks existing note it should load the text.
+		NoteItem note = notesList.get(position);         // position is the index of the item clicked
+		// Debug info
+		Log.i("NOTES", "The position clicked " + position);
+		
+		Intent intent = new Intent(this, NoteEditorActivity.class);
+		intent.putExtra("key", note.getKey());
+		intent.putExtra("text", note.getText());
+		startActivityForResult(intent, EDITOR_ACTIVITY_REQUEST);
+	}
+	
+	
+	// When EditorActivity returns to the main activity this method is triggered
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// check if we are back from right activity 
+		if (requestCode == EDITOR_ACTIVITY_REQUEST && resultCode == RESULT_OK ) {
+			// Log.i("NOTES", "Trying to save the sent data");
+			NoteItem note = new NoteItem();
+			Log.i("NOTES", "Value of Key  in Main Activity "+data.getStringExtra("key") + " Value " + data.getStringExtra("text"));
+			
+			note.setKey(data.getStringExtra("key"));
+			note.setText(data.getStringExtra("text"));          // there was a typo error i wrote setKey
+			datasource.update(note);							// so key value was overwritten by Text value
+			refreshDisplay();
+		}
+	}
 }

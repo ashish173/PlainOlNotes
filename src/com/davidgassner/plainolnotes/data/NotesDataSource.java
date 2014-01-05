@@ -53,7 +53,9 @@ public class NotesDataSource {
 		
 		Log.i("NOTES", "In update method");
 		SharedPreferences.Editor editor = notePrefs.edit();  // getting the editor from shared Prefs.
+		Log.i("NOTES", "Value of Key  in Notes DataSource class "+ note.getKey() + " Text " + note.getText());
 		editor.putString(note.getKey(), note.getText());
+		
 		editor.commit();
 		return true;
 	}
