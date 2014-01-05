@@ -1,14 +1,18 @@
 package com.davidgassner.plainolnotes;
 
+import java.lang.ref.Reference;
 import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -19,6 +23,8 @@ import com.davidgassner.plainolnotes.data.NotesDataSource;
 public class MainActivity extends ListActivity {  // ListActivity inherits from Activity class
 
 	private static final int EDITOR_ACTIVITY_REQUEST = 1001;
+	private static final int MENU_DELETE_ID = 1002;
+	private int currentNoteId;
 	private NotesDataSource datasource;   // instantiating the NoteDataSource class
 	List<NoteItem> notesList;
     @Override
@@ -28,6 +34,8 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
         
         // attaches the main activity from resources to the current layout
         setContentView(R.layout.activity_main);
+        // context menu enables the hold and pop up menu functionality
+        registerForContextMenu(getListView());          // registering context menu for ListView
         
         // data store is instantiated from next line 
         // Context is the superclass of Activity class and thus Main Activity class
@@ -134,4 +142,27 @@ public class MainActivity extends ListActivity {  // ListActivity inherits from 
 			refreshDisplay();
 		}
 	}
+	
+	@Override
+		public void onCreateContextMenu(ContextMenu menu, View v,
+				ContextMenuInfo menuInfo) {
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;  // ??
+			currentNoteId = (int) info.id;         
+			menu.add(0, MENU_DELETE_ID, 0, "Delete");   // see the method definition for more info
+			// menu.add(0, MENU, arg2, arg3)           // add another menu item
+		}
+	
+	
+	@Override
+		public boolean onContextItemSelected(MenuItem item) {
+			
+			if (item.getItemId() == MENU_DELETE_ID) {
+				NoteItem note = notesList.get(currentNoteId);
+				datasource.remove(note);
+				refreshDisplay();
+			}
+			return super.onContextItemSelected(item);
+		}
+	
+	
 }
